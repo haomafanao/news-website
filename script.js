@@ -18,7 +18,7 @@ const newsSources = [
 ];
 
 // 新闻 API 配置
-const newsApiKey = 'pub_32499e2b0d2b6b7c4e2c8b8c5e8c7d6b5d4c3b2a'; // 请替换为您的 API 密钥
+const newsApiKey = 'pub_32499e2b0d2b6b7c4e2c8b8c5e8c7d6b5d4c3b2a';
 const newsApiUrl = 'https://newsdata.io/api/1/news';
 
 // 模拟新闻数据（实际项目中应该从API获取）
@@ -421,7 +421,8 @@ function setupBreakingNews() {
 async function fetchNews() {
     showLoading();
     try {
-        const response = await fetch(`${newsApiUrl}?apikey=${newsApiKey}&country=cn&language=zh`);
+        // 添加 not_category 参数排除体育新闻
+        const response = await fetch(`${newsApiUrl}?apikey=${newsApiKey}&country=cn&language=zh&not_category=sports`);
         const data = await response.json();
         
         if (data.status === 'success') {
@@ -464,12 +465,10 @@ async function fetchNews() {
             updateBreakingNews();
         } else {
             console.error('获取新闻失败:', data.message);
-            // 如果 API 调用失败，使用模拟数据
             loadNews();
         }
     } catch (error) {
         console.error('获取新闻出错:', error);
-        // 如果发生错误，使用模拟数据
         loadNews();
     } finally {
         hideLoading();
@@ -487,6 +486,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupRefresh();
     setupBreakingNews();
     
-    // 每隔 5 分钟自动刷新新闻
-    setInterval(fetchNews, 5 * 60 * 1000);
+    // 每隔 3 分钟自动刷新新闻
+    setInterval(fetchNews, 3 * 60 * 1000);
 }); 
