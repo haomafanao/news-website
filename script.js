@@ -67,9 +67,9 @@ const mockNews = {
                 title: '全国两会召开在即，代表委员陆续抵京',
                 description: '2024年全国两会即将召开，各地代表委员已陆续抵京，准备参加这一重要会议。',
                 content: '2024年全国两会即将召开，各地代表委员已陆续抵京。本次两会将聚焦经济发展、民生改善、科技创新等重大议题。代表委员们将就国家发展大计建言献策，共商国是。',
-                image: 'https://picsum.photos/800/600?random=1',
-                source: '新浪新闻',
-                time: '2024-03-07 10:30',
+                image: 'https://via.placeholder.com/800x600.png?text=两会新闻',
+                source: '新华社',
+                time: '2024-03-09 10:30',
                 category: 'domestic'
             },
             {
@@ -77,9 +77,9 @@ const mockNews = {
                 title: '科技创新引领未来，人工智能发展新突破',
                 description: '我国在人工智能领域取得重大突破，多项技术达到国际领先水平。',
                 content: '我国在人工智能领域取得重大突破，多项技术达到国际领先水平。特别是在自然语言处理、计算机视觉等领域，我国科研人员开发的新算法和模型在国际评测中屡获佳绩。',
-                image: 'https://picsum.photos/800/600?random=2',
-                source: '腾讯新闻',
-                time: '2024-03-07 09:15',
+                image: 'https://via.placeholder.com/800x600.png?text=科技创新',
+                source: '科技日报',
+                time: '2024-03-09 09:15',
                 category: 'tech'
             },
             {
@@ -87,9 +87,9 @@ const mockNews = {
                 title: '全球气候变化：各国积极应对',
                 description: '世界各国采取积极措施应对气候变化，推动绿色低碳发展。',
                 content: '世界各国采取积极措施应对气候变化，推动绿色低碳发展。多个国家承诺到2050年实现碳中和目标，并出台了一系列政策措施支持可再生能源发展。',
-                image: 'https://picsum.photos/800/600?random=3',
-                source: '网易新闻',
-                time: '2024-03-07 08:45',
+                image: 'https://via.placeholder.com/800x600.png?text=气候变化',
+                source: '环球时报',
+                time: '2024-03-09 08:45',
                 category: 'international'
             }
         ],
@@ -99,20 +99,20 @@ const mockNews = {
                 title: '新能源汽车市场持续增长',
                 description: '2024年新能源汽车销量再创新高，市场渗透率不断提升。',
                 content: '2024年新能源汽车销量再创新高，市场渗透率不断提升。随着技术进步和成本下降，新能源汽车正在成为越来越多消费者的选择。',
-                image: 'https://picsum.photos/800/600?random=4',
-                source: '新浪新闻',
-                time: '2024-03-07 11:20',
+                image: 'https://via.placeholder.com/800x600.png?text=新能源汽车',
+                source: '经济日报',
+                time: '2024-03-09 11:20',
                 category: 'finance'
             },
             {
                 id: 5,
-                title: '体育赛事：亚洲杯精彩回顾',
-                description: '亚洲杯足球赛精彩回顾，多支球队展现出色表现。',
-                content: '亚洲杯足球赛精彩回顾，多支球队展现出色表现。本届赛事展现了亚洲足球的进步，多场比赛精彩纷呈，令人印象深刻。',
-                image: 'https://picsum.photos/800/600?random=5',
-                source: '腾讯新闻',
-                time: '2024-03-07 10:55',
-                category: 'sports'
+                title: '数字经济发展提速，互联网产业创新升级',
+                description: '数字经济蓬勃发展，新业态新模式不断涌现。',
+                content: '数字经济蓬勃发展，新业态新模式不断涌现。云计算、大数据、人工智能等技术加速融合，推动传统产业转型升级。',
+                image: 'https://via.placeholder.com/800x600.png?text=数字经济',
+                source: '中国日报',
+                time: '2024-03-09 10:55',
+                category: 'tech'
             }
         ]
     }
@@ -421,71 +421,30 @@ function setupBreakingNews() {
 async function fetchNews() {
     showLoading();
     try {
-        // 添加错误处理和超时
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
-
-        const response = await fetch(`${newsApiUrl}?apikey=${newsApiKey}&country=cn&language=zh&not_category=sports`, {
-            signal: controller.signal,
-            headers: {
-                'Accept': 'application/json'
-            }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // 更新时间戳
+        const now = new Date();
+        mockNews.all.breaking.forEach(news => {
+            news.time = now.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+        });
+        mockNews.all.hot.forEach(news => {
+            news.time = now.toLocaleString('zh-CN');
+        });
+        mockNews.all.latest.forEach(news => {
+            news.time = now.toLocaleString('zh-CN');
         });
 
-        clearTimeout(timeoutId);
-        
-        const data = await response.json();
-        
-        if (data.status === 'success' && data.results && data.results.length > 0) {
-            // 将 API 返回的数据转换为我们需要的格式
-            const newsData = {
-                breaking: data.results.slice(0, 5).map((item, index) => ({
-                    id: `b${index + 1}`,
-                    title: item.title,
-                    time: new Date(item.pubDate).toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'}),
-                    source: item.source_id,
-                    category: item.category?.[0] || 'general'
-                })),
-                hot: data.results.slice(5, 8).map((item, index) => ({
-                    id: index + 1,
-                    title: item.title,
-                    description: item.description || '',
-                    content: item.content || item.description || '',
-                    image: item.image_url || `https://picsum.photos/800/600?random=${index + 1}`,
-                    source: item.source_id,
-                    time: new Date(item.pubDate).toLocaleString('zh-CN'),
-                    category: item.category?.[0] || 'general'
-                })),
-                latest: data.results.slice(8, 10).map((item, index) => ({
-                    id: index + 4,
-                    title: item.title,
-                    description: item.description || '',
-                    content: item.content || item.description || '',
-                    image: item.image_url || `https://picsum.photos/800/600?random=${index + 4}`,
-                    source: item.source_id,
-                    time: new Date(item.pubDate).toLocaleString('zh-CN'),
-                    category: item.category?.[0] || 'general'
-                }))
-            };
-            
-            // 更新全局新闻数据
-            mockNews.all = newsData;
-            
-            // 重新渲染页面
-            loadNews();
-            updateBreakingNews();
-
-            // 显示成功消息
-            showNotification('新闻已更新', 'success');
-        } else {
-            throw new Error('API 返回数据格式错误');
-        }
-    } catch (error) {
-        console.error('获取新闻出错:', error);
-        // 如果发生错误，使用模拟数据
+        // 重新渲染页面
         loadNews();
-        // 显示错误消息
-        showNotification('获取新闻失败，使用缓存数据', 'error');
+        updateBreakingNews();
+        
+        // 显示成功消息
+        showNotification('新闻已更新', 'success');
+    } catch (error) {
+        console.error('更新新闻出错:', error);
+        showNotification('更新新闻失败', 'error');
     } finally {
         hideLoading();
     }
