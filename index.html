@@ -15,11 +15,9 @@
                 热点新闻聚合
             </div>
             <div class="nav-links">
-                <a href="#" class="active" data-category="all">首页</a>
+                <a href="#" class="active" data-category="all">全部</a>
                 <a href="#" data-category="domestic">国内</a>
                 <a href="#" data-category="international">国际</a>
-                <a href="#" data-category="tech">科技</a>
-                <a href="#" data-category="finance">财经</a>
             </div>
             <div class="refresh-button">
                 <i class="fas fa-sync-alt"></i>
@@ -36,55 +34,12 @@
             <button id="searchButton">搜索</button>
         </div>
 
-        <!-- 添加轮播新闻区域 -->
-        <div class="breaking-news-container">
-            <div class="breaking-news-header">
-                <i class="fas fa-broadcast-tower"></i>
-                <span>7*24小时热点</span>
-            </div>
-            <div class="breaking-news-content">
-                <div class="breaking-news-scroll">
-                    <div id="breakingNewsList"></div>
-                </div>
-            </div>
-        </div>
-
         <div class="news-container">
-            <div class="news-section">
-                <div class="section-header">
-                    <h2>热门新闻</h2>
-                    <div class="section-controls">
-                        <button class="view-toggle" data-view="grid">
-                            <i class="fas fa-th-large"></i>
-                        </button>
-                        <button class="view-toggle" data-view="list">
-                            <i class="fas fa-list"></i>
-                        </button>
-                    </div>
-                </div>
-                <div id="hotNews" class="news-grid">
-                    <!-- 新闻内容将通过 JavaScript 动态加载 -->
-                </div>
-            </div>
-
-            <div class="news-section">
-                <div class="section-header">
-                    <h2>最新新闻</h2>
-                </div>
-                <div id="latestNews" class="news-list">
-                    <!-- 新闻内容将通过 JavaScript 动态加载 -->
-                </div>
+            <div class="news-grid" id="newsGrid">
+                <!-- 新闻内容将通过 JavaScript 动态加载 -->
             </div>
         </div>
     </main>
-
-    <!-- 新闻详情模态框 -->
-    <div id="newsModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <div id="modalContent"></div>
-        </div>
-    </div>
 
     <!-- 加载动画 -->
     <div id="loadingSpinner" class="loading-spinner">
