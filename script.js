@@ -421,11 +421,22 @@ function setupBreakingNews() {
 async function fetchNews() {
     showLoading();
     try {
-        // 添加 not_category 参数排除体育新闻
-        const response = await fetch(`${newsApiUrl}?apikey=${newsApiKey}&country=cn&language=zh&not_category=sports`);
+        // 添加错误处理和超时
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
+        const response = await fetch(`${newsApiUrl}?apikey=${newsApiKey}&country=cn&language=zh&not_category=sports`, {
+            signal: controller.signal,
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        clearTimeout(timeoutId);
+        
         const data = await response.json();
         
-        if (data.status === 'success') {
+        if (data.status === 'success' && data.results && data.results.length > 0) {
             // 将 API 返回的数据转换为我们需要的格式
             const newsData = {
                 breaking: data.results.slice(0, 5).map((item, index) => ({
@@ -463,17 +474,74 @@ async function fetchNews() {
             // 重新渲染页面
             loadNews();
             updateBreakingNews();
+
+            // 显示成功消息
+            showNotification('新闻已更新', 'success');
         } else {
-            console.error('获取新闻失败:', data.message);
-            loadNews();
+            throw new Error('API 返回数据格式错误');
         }
     } catch (error) {
         console.error('获取新闻出错:', error);
+        // 如果发生错误，使用模拟数据
         loadNews();
+        // 显示错误消息
+        showNotification('获取新闻失败，使用缓存数据', 'error');
     } finally {
         hideLoading();
     }
 }
+
+// 添加通知功能
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // 3秒后自动消失
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// 添加通知样式
+const style = document.createElement('style');
+style.textContent = `
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification.success {
+    background-color: #4caf50;
+}
+
+.notification.error {
+    background-color: #f44336;
+}
+
+.notification.info {
+    background-color: #2196f3;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+`;
+document.head.appendChild(style);
 
 // 修改页面加载完成后的执行函数
 document.addEventListener('DOMContentLoaded', () => {
