@@ -43,7 +43,7 @@ let breakingNewsInterval;
 function renderNewsCard(news) {
     return `
         <div class="news-card" data-id="${news.id}">
-            <img src="${news.image}" alt="${news.title}">
+            <img src="${news.image}" alt="${news.title}" onerror="this.onerror=null; this.src='${defaultImage}';">
             <div class="news-card-content">
                 <h3>${news.title}</h3>
                 <p>${news.description}</p>
@@ -57,7 +57,7 @@ function renderNewsCard(news) {
 function renderNewsItem(news) {
     return `
         <div class="news-item" data-id="${news.id}">
-            <img src="${news.image}" alt="${news.title}">
+            <img src="${news.image}" alt="${news.title}" onerror="this.onerror=null; this.src='${defaultImage}';">
             <div class="news-item-content">
                 <h3>${news.title}</h3>
                 <p>${news.description}</p>
@@ -76,7 +76,7 @@ function renderNewsDetail(news) {
                 <span>来源：${news.source}</span>
                 <span>发布时间：${news.time}</span>
             </div>
-            <img src="${news.image}" alt="${news.title}" class="detail-image">
+            <img src="${news.image}" alt="${news.title}" class="detail-image" onerror="this.onerror=null; this.src='${defaultImage}';">
             <div class="news-content">
                 <p>${news.content}</p>
             </div>
@@ -327,7 +327,15 @@ function setupBreakingNews() {
             const newsId = newsItem.dataset.id;
             const news = newsData.breaking.find(n => n.id === newsId);
             if (news) {
-                showModal(news);
+                const modal = document.getElementById('newsModal');
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = renderNewsDetail({
+                    ...news,
+                    image: defaultImage,
+                    description: news.title,
+                    content: news.title
+                });
+                modal.style.display = 'block';
             }
         }
     });
@@ -359,7 +367,8 @@ async function fetchNews() {
                 title: article.title,
                 time: new Date(article.pubDate).toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'}),
                 source: article.source_name || '未知来源',
-                category: article.category?.[0] || 'general'
+                category: article.category?.[0] || 'general',
+                image: article.image_url || defaultImage
             })),
             hot: articles.slice(5, 8).map((article, index) => ({
                 id: index + 1,
