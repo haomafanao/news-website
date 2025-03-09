@@ -67,7 +67,7 @@ const mockNews = {
                 title: '全国两会召开在即，代表委员陆续抵京',
                 description: '2024年全国两会即将召开，各地代表委员已陆续抵京，准备参加这一重要会议。',
                 content: '2024年全国两会即将召开，各地代表委员已陆续抵京。本次两会将聚焦经济发展、民生改善、科技创新等重大议题。代表委员们将就国家发展大计建言献策，共商国是。',
-                image: 'https://via.placeholder.com/800x600.png?text=两会新闻',
+                image: 'https://placehold.co/800x600/eee/999?text=两会新闻',
                 source: '新华社',
                 time: '2024-03-09 10:30',
                 category: 'domestic'
@@ -77,7 +77,7 @@ const mockNews = {
                 title: '科技创新引领未来，人工智能发展新突破',
                 description: '我国在人工智能领域取得重大突破，多项技术达到国际领先水平。',
                 content: '我国在人工智能领域取得重大突破，多项技术达到国际领先水平。特别是在自然语言处理、计算机视觉等领域，我国科研人员开发的新算法和模型在国际评测中屡获佳绩。',
-                image: 'https://via.placeholder.com/800x600.png?text=科技创新',
+                image: 'https://placehold.co/800x600/eee/999?text=科技创新',
                 source: '科技日报',
                 time: '2024-03-09 09:15',
                 category: 'tech'
@@ -87,7 +87,7 @@ const mockNews = {
                 title: '全球气候变化：各国积极应对',
                 description: '世界各国采取积极措施应对气候变化，推动绿色低碳发展。',
                 content: '世界各国采取积极措施应对气候变化，推动绿色低碳发展。多个国家承诺到2050年实现碳中和目标，并出台了一系列政策措施支持可再生能源发展。',
-                image: 'https://via.placeholder.com/800x600.png?text=气候变化',
+                image: 'https://placehold.co/800x600/eee/999?text=气候变化',
                 source: '环球时报',
                 time: '2024-03-09 08:45',
                 category: 'international'
@@ -99,7 +99,7 @@ const mockNews = {
                 title: '新能源汽车市场持续增长',
                 description: '2024年新能源汽车销量再创新高，市场渗透率不断提升。',
                 content: '2024年新能源汽车销量再创新高，市场渗透率不断提升。随着技术进步和成本下降，新能源汽车正在成为越来越多消费者的选择。',
-                image: 'https://via.placeholder.com/800x600.png?text=新能源汽车',
+                image: 'https://placehold.co/800x600/eee/999?text=新能源汽车',
                 source: '经济日报',
                 time: '2024-03-09 11:20',
                 category: 'finance'
@@ -109,7 +109,7 @@ const mockNews = {
                 title: '数字经济发展提速，互联网产业创新升级',
                 description: '数字经济蓬勃发展，新业态新模式不断涌现。',
                 content: '数字经济蓬勃发展，新业态新模式不断涌现。云计算、大数据、人工智能等技术加速融合，推动传统产业转型升级。',
-                image: 'https://via.placeholder.com/800x600.png?text=数字经济',
+                image: 'https://placehold.co/800x600/eee/999?text=数字经济',
                 source: '中国日报',
                 time: '2024-03-09 10:55',
                 category: 'tech'
