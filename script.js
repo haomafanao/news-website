@@ -17,6 +17,10 @@ const newsSources = [
     }
 ];
 
+// 新闻 API 配置
+const newsApiKey = 'pub_32499e2b0d2b6b7c4e2c8b8c5e8c7d6b5d4c3b2a'; // 请替换为您的 API 密钥
+const newsApiUrl = 'https://newsdata.io/api/1/news';
+
 // 模拟新闻数据（实际项目中应该从API获取）
 const mockNews = {
     all: {
@@ -297,10 +301,12 @@ function setupRefresh() {
     
     refreshButton.addEventListener('click', () => {
         refreshButton.querySelector('i').classList.add('fa-spin');
-        loadNews();
-        setTimeout(() => {
-            refreshButton.querySelector('i').classList.remove('fa-spin');
-        }, 1000);
+        // 调用 API 获取新闻
+        fetchNews().finally(() => {
+            setTimeout(() => {
+                refreshButton.querySelector('i').classList.remove('fa-spin');
+            }, 1000);
+        });
     });
 }
 
@@ -411,13 +417,76 @@ function setupBreakingNews() {
     startAutoPlay();
 }
 
-// 页面加载完成后执行
+// 获取新闻数据
+async function fetchNews() {
+    showLoading();
+    try {
+        const response = await fetch(`${newsApiUrl}?apikey=${newsApiKey}&country=cn&language=zh`);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            // 将 API 返回的数据转换为我们需要的格式
+            const newsData = {
+                breaking: data.results.slice(0, 5).map((item, index) => ({
+                    id: `b${index + 1}`,
+                    title: item.title,
+                    time: new Date(item.pubDate).toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'}),
+                    source: item.source_id,
+                    category: item.category?.[0] || 'general'
+                })),
+                hot: data.results.slice(5, 8).map((item, index) => ({
+                    id: index + 1,
+                    title: item.title,
+                    description: item.description || '',
+                    content: item.content || item.description || '',
+                    image: item.image_url || `https://picsum.photos/800/600?random=${index + 1}`,
+                    source: item.source_id,
+                    time: new Date(item.pubDate).toLocaleString('zh-CN'),
+                    category: item.category?.[0] || 'general'
+                })),
+                latest: data.results.slice(8, 10).map((item, index) => ({
+                    id: index + 4,
+                    title: item.title,
+                    description: item.description || '',
+                    content: item.content || item.description || '',
+                    image: item.image_url || `https://picsum.photos/800/600?random=${index + 4}`,
+                    source: item.source_id,
+                    time: new Date(item.pubDate).toLocaleString('zh-CN'),
+                    category: item.category?.[0] || 'general'
+                }))
+            };
+            
+            // 更新全局新闻数据
+            mockNews.all = newsData;
+            
+            // 重新渲染页面
+            loadNews();
+            updateBreakingNews();
+        } else {
+            console.error('获取新闻失败:', data.message);
+            // 如果 API 调用失败，使用模拟数据
+            loadNews();
+        }
+    } catch (error) {
+        console.error('获取新闻出错:', error);
+        // 如果发生错误，使用模拟数据
+        loadNews();
+    } finally {
+        hideLoading();
+    }
+}
+
+// 修改页面加载完成后的执行函数
 document.addEventListener('DOMContentLoaded', () => {
-    loadNews();
+    // 首次加载时获取新闻
+    fetchNews();
     setupSearch();
     setupModal();
     setupViewToggle();
     setupCategoryToggle();
     setupRefresh();
     setupBreakingNews();
+    
+    // 每隔 5 分钟自动刷新新闻
+    setInterval(fetchNews, 5 * 60 * 1000);
 }); 
