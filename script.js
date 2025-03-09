@@ -21,97 +21,100 @@ const newsSources = [
 const newsApiKey = 'pub_32499e2b0d2b6b7c4e2c8b8c5e8c7d6b5d4c3b2a';
 const newsApiUrl = 'https://newsdata.io/api/1/news';
 
-// 模拟新闻数据（实际项目中应该从API获取）
+// 默认图片（Base64编码的灰色背景图）
+const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNHB4IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+6K+l5pWw5o2u5Li65pWw5o2u5bGV56S6PC90ZXh0Pjwvc3ZnPg==';
+
+// 模拟新闻数据
 const mockNews = {
     all: {
         breaking: [
             {
                 id: 'b1',
-                title: '央行宣布降准0.5个百分点，释放长期资金约1万亿元',
-                time: '10:30',
-                source: '财经网',
-                category: 'finance'
+                title: '中美元首通话：就台湾、人工智能等议题深入交换意见',
+                time: '14:30',
+                source: '新华社',
+                category: 'international'
             },
             {
                 id: 'b2',
-                title: '国务院常务会议：部署促进消费升级措施',
-                time: '10:15',
-                source: '新华社',
-                category: 'domestic'
+                title: '国内首个量子计算机操作系统发布',
+                time: '14:15',
+                source: '科技日报',
+                category: 'tech'
             },
             {
                 id: 'b3',
-                title: '全球股市震荡，美联储维持利率不变',
-                time: '10:00',
-                source: '路透社',
-                category: 'finance'
-            },
-            {
-                id: 'b4',
-                title: '全国两会召开在即，代表委员陆续抵京',
-                time: '09:45',
-                source: '人民日报',
+                title: '两会热点：GDP增长目标定在5%左右',
+                time: '14:00',
+                source: '经济参考报',
                 category: 'domestic'
             },
             {
+                id: 'b4',
+                title: '欧盟通过AI法案，全球首个AI监管框架',
+                time: '13:45',
+                source: '路透社',
+                category: 'international'
+            },
+            {
                 id: 'b5',
-                title: '新能源汽车补贴政策调整，市场反应积极',
-                time: '09:30',
-                source: '经济日报',
+                title: '央行行长：继续实施稳健的货币政策',
+                time: '13:30',
+                source: '金融时报',
                 category: 'finance'
             }
         ],
         hot: [
             {
                 id: 1,
-                title: '全国两会召开在即，代表委员陆续抵京',
-                description: '2024年全国两会即将召开，各地代表委员已陆续抵京，准备参加这一重要会议。',
-                content: '2024年全国两会即将召开，各地代表委员已陆续抵京。本次两会将聚焦经济发展、民生改善、科技创新等重大议题。代表委员们将就国家发展大计建言献策，共商国是。',
-                image: 'https://placehold.co/800x600/eee/999?text=两会新闻',
-                source: '新华社',
-                time: '2024-03-09 10:30',
+                title: '2024年政府工作报告解读：经济发展新动能',
+                description: '政府工作报告提出多项重要经济发展目标和政策措施',
+                content: '2024年政府工作报告强调，要着力扩大内需，持续深化改革开放，加快建设现代化产业体系。报告提出，今年国内生产总值预期增长5%左右，城镇新增就业1200万人以上。同时，将继续实施积极的财政政策和稳健的货币政策，促进经济持续健康发展。',
+                image: defaultImage,
+                source: '人民日报',
+                time: '2024-03-09 14:30',
                 category: 'domestic'
             },
             {
                 id: 2,
-                title: '科技创新引领未来，人工智能发展新突破',
-                description: '我国在人工智能领域取得重大突破，多项技术达到国际领先水平。',
-                content: '我国在人工智能领域取得重大突破，多项技术达到国际领先水平。特别是在自然语言处理、计算机视觉等领域，我国科研人员开发的新算法和模型在国际评测中屡获佳绩。',
-                image: 'https://placehold.co/800x600/eee/999?text=科技创新',
+                title: '量子通信取得重大突破：首次实现千公里级量子纠缠',
+                description: '我国科学家在量子通信领域取得重大突破，为构建量子互联网奠定基础',
+                content: '中国科学技术大学研究团队成功实现了千公里级的量子纠缠分发，这一突破为未来构建广域量子互联网奠定了重要基础。该成果发表在国际顶级期刊《自然》上，引起国际学术界广泛关注。',
+                image: defaultImage,
                 source: '科技日报',
-                time: '2024-03-09 09:15',
+                time: '2024-03-09 14:15',
                 category: 'tech'
             },
             {
                 id: 3,
-                title: '全球气候变化：各国积极应对',
-                description: '世界各国采取积极措施应对气候变化，推动绿色低碳发展。',
-                content: '世界各国采取积极措施应对气候变化，推动绿色低碳发展。多个国家承诺到2050年实现碳中和目标，并出台了一系列政策措施支持可再生能源发展。',
-                image: 'https://placehold.co/800x600/eee/999?text=气候变化',
+                title: '全球气候变化应对：196个国家签署新气候协议',
+                description: '联合国气候大会达成历史性协议，承诺2050年前实现碳中和',
+                content: '在最新一轮联合国气候大会上，196个国家签署了具有里程碑意义的新气候协议。协议要求各国在2050年前实现碳中和，并设立了1000亿美元的气候基金，支持发展中国家应对气候变化。',
+                image: defaultImage,
                 source: '环球时报',
-                time: '2024-03-09 08:45',
+                time: '2024-03-09 14:00',
                 category: 'international'
             }
         ],
         latest: [
             {
                 id: 4,
-                title: '新能源汽车市场持续增长',
-                description: '2024年新能源汽车销量再创新高，市场渗透率不断提升。',
-                content: '2024年新能源汽车销量再创新高，市场渗透率不断提升。随着技术进步和成本下降，新能源汽车正在成为越来越多消费者的选择。',
-                image: 'https://placehold.co/800x600/eee/999?text=新能源汽车',
-                source: '经济日报',
-                time: '2024-03-09 11:20',
+                title: '数字人民币试点范围进一步扩大',
+                description: '央行宣布数字人民币试点将扩展至更多城市，应用场景不断丰富',
+                content: '中国人民银行宣布，数字人民币试点范围将进一步扩大，新增10个试点城市。同时，数字人民币的应用场景也将从零售支付扩展到政务服务、公共缴费等更多领域。这标志着数字人民币的发展进入新阶段。',
+                image: defaultImage,
+                source: '金融时报',
+                time: '2024-03-09 13:45',
                 category: 'finance'
             },
             {
                 id: 5,
-                title: '数字经济发展提速，互联网产业创新升级',
-                description: '数字经济蓬勃发展，新业态新模式不断涌现。',
-                content: '数字经济蓬勃发展，新业态新模式不断涌现。云计算、大数据、人工智能等技术加速融合，推动传统产业转型升级。',
-                image: 'https://placehold.co/800x600/eee/999?text=数字经济',
+                title: '新一代人工智能大模型发布，性能提升显著',
+                description: '国内科技公司发布新一代AI大模型，在多个领域超越国际先进水平',
+                content: '国内领先科技公司今日发布新一代人工智能大模型，在自然语言处理、图像识别等多个领域的性能显著提升，部分指标超越国际先进水平。该模型已开始在医疗、教育、金融等领域进行应用。',
+                image: defaultImage,
                 source: '中国日报',
-                time: '2024-03-09 10:55',
+                time: '2024-03-09 13:30',
                 category: 'tech'
             }
         ]
