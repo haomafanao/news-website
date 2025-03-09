@@ -133,20 +133,24 @@ function hideLoading() {
     document.getElementById('loadingSpinner').style.display = 'none';
 }
 
+// 显示新闻详情模态框
+function showModal(news) {
+    const modal = document.getElementById('newsModal');
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = renderNewsDetail(news);
+    modal.style.display = 'block';
+}
+
+// 隐藏新闻详情模态框
+function hideModal() {
+    const modal = document.getElementById('newsModal');
+    modal.style.display = 'none';
+}
+
 // 设置新闻详情模态框
 function setupModal() {
     const modal = document.getElementById('newsModal');
-    const modalContent = document.getElementById('modalContent');
     const closeButton = document.querySelector('.close-button');
-
-    function showModal(news) {
-        modalContent.innerHTML = renderNewsDetail(news);
-        modal.style.display = 'block';
-    }
-
-    function hideModal() {
-        modal.style.display = 'none';
-    }
 
     // 点击新闻卡片或列表项时显示详情
     document.addEventListener('click', (e) => {
