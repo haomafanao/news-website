@@ -1,6 +1,18 @@
 // 新闻 API 配置
-const newsApiKey = 'pub_32499e2b0d2b6b7c4e2c8b8c5e8c7d6b5d4c3b2a';
-const newsApiUrl = 'https://newsdata.io/api/1/news';
+const newsApis = {
+    newsapi: {
+        key: '9f0e15b6821c4b78bf1bff31acab9171',
+        url: 'https://newsapi.org/v2/top-headlines'
+    },
+    tianxingBulletin: {
+        key: 'c049f16778a4775341688d6f06ab55d7',
+        url: 'https://apis.tianapi.com/bulletin/index'
+    },
+    tianxingFinance: {
+        key: 'c049f16778a4775341688d6f06ab55d7',
+        url: 'https://apis.tianapi.com/caijing/index'
+    }
+};
 
 // 默认图片（Base64编码的灰色背景图）
 const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNHB4IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+6K+l5pWw5o2u5Li65pWw5o2u5bGV56S6PC90ZXh0Pjwvc3ZnPg==';
@@ -119,37 +131,138 @@ function setupSearch() {
 async function fetchNews() {
     showLoading();
     try {
-        // 调用新闻API获取数据
-        const response = await fetch(`${newsApiUrl}?apikey=${newsApiKey}&language=zh&country=cn&size=20`);
-        if (!response.ok) {
-            throw new Error('获取新闻失败');
-        }
-        
-        const data = await response.json();
-        
-        // 处理API返回的数据
-        newsData = (data.results || []).map((article, index) => ({
-            id: index + 1,
-            title: article.title,
-            description: article.description || '暂无描述',
-            image: article.image_url || defaultImage,
-            source: article.source_name || '未知来源',
-            time: new Date(article.pubDate).toLocaleString('zh-CN'),
-            category: article.category?.[0] === 'world' ? 'international' : 'domestic',
-            link: article.link
-        }));
+        const newsPromises = [
+            fetchNewsAPI(),
+            fetchTianxingBulletin(),
+            fetchTianxingFinance()
+        ];
+
+        const results = await Promise.allSettled(newsPromises);
+        let allNews = [];
+
+        results.forEach(result => {
+            if (result.status === 'fulfilled' && result.value) {
+                allNews = allNews.concat(result.value);
+            }
+        });
+
+        // 对新闻进行去重和排序
+        newsData = removeDuplicateNews(allNews)
+            .sort((a, b) => new Date(b.time) - new Date(a.time));
 
         // 重新渲染页面
         loadNews();
-        
-        // 显示成功消息
         showNotification('新闻已更新', 'success');
     } catch (error) {
         console.error('更新新闻出错:', error);
-        showNotification('更新新闻失败', 'error');
+        showNotification('部分新闻源更新失败', 'error');
     } finally {
         hideLoading();
     }
+}
+
+// 从NewsAPI获取新闻
+async function fetchNewsAPI() {
+    try {
+        const response = await fetch(`${newsApis.newsapi.url}?country=cn&pageSize=50&apiKey=${newsApis.newsapi.key}`);
+        if (!response.ok) return [];
+        
+        const data = await response.json();
+        return (data.articles || []).map((article, index) => ({
+            id: `newsapi-${index}`,
+            title: article.title,
+            description: article.description || '暂无描述',
+            image: article.urlToImage || defaultImage,
+            source: article.source.name || '未知来源',
+            time: new Date(article.publishedAt).toLocaleString('zh-CN'),
+            category: determineCategory(article),
+            link: article.url
+        }));
+    } catch (error) {
+        console.error('NewsAPI获取失败:', error);
+        return [];
+    }
+}
+
+// 从天行数据获取新闻公告
+async function fetchTianxingBulletin() {
+    try {
+        const response = await fetch(`${newsApis.tianxingBulletin.url}?key=${newsApis.tianxingBulletin.key}&num=50`);
+        if (!response.ok) return [];
+        
+        const data = await response.json();
+        return (data.result.list || []).map((article, index) => ({
+            id: `tianxing-bulletin-${index}`,
+            title: article.title,
+            description: article.content || '暂无描述',
+            image: article.imgurl || defaultImage,
+            source: article.source || '未知来源',
+            time: article.pubDate,
+            category: 'domestic',
+            link: article.url
+        }));
+    } catch (error) {
+        console.error('天行新闻公告获取失败:', error);
+        return [];
+    }
+}
+
+// 从天行数据获取财经新闻
+async function fetchTianxingFinance() {
+    try {
+        const response = await fetch(`${newsApis.tianxingFinance.url}?key=${newsApis.tianxingFinance.key}&num=50`);
+        if (!response.ok) return [];
+        
+        const data = await response.json();
+        return (data.result.list || []).map((article, index) => ({
+            id: `tianxing-finance-${index}`,
+            title: article.title,
+            description: article.content || '暂无描述',
+            image: article.imgurl || defaultImage,
+            source: article.source || '未知来源',
+            time: article.pubDate,
+            category: determineCategory(article),
+            link: article.url
+        }));
+    } catch (error) {
+        console.error('天行财经新闻获取失败:', error);
+        return [];
+    }
+}
+
+// 去除重复新闻
+function removeDuplicateNews(news) {
+    const seen = new Set();
+    return news.filter(item => {
+        const duplicate = seen.has(item.title);
+        seen.add(item.title);
+        return !duplicate;
+    });
+}
+
+// 判断新闻分类
+function determineCategory(article) {
+    const keywords = {
+        international: ['world', 'international', '国际', '全球', '海外'],
+        domestic: ['china', 'domestic', '国内', '中国', '大陆', '内地']
+    };
+    
+    const content = [
+        article.category?.[0]?.toLowerCase() || '',
+        article.title?.toLowerCase() || '',
+        article.description?.toLowerCase() || ''
+    ].join(' ');
+    
+    if (keywords.international.some(keyword => content.includes(keyword))) {
+        return 'international';
+    }
+    
+    if (keywords.domestic.some(keyword => content.includes(keyword))) {
+        return 'domestic';
+    }
+    
+    // 默认为国内新闻
+    return 'domestic';
 }
 
 // 添加通知功能
@@ -173,6 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCategoryToggle();
     setupRefresh();
     
-    // 每隔 3 分钟自动刷新新闻
-    setInterval(fetchNews, 3 * 60 * 1000);
+    // 每隔 15 分钟自动刷新新闻
+    setInterval(fetchNews, 15 * 60 * 1000);
 }); 
