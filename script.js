@@ -1,22 +1,3 @@
-// 新闻数据源配置
-const newsSources = [
-    {
-        name: '新浪新闻',
-        url: 'https://news.sina.com.cn/',
-        api: 'https://news.sina.com.cn/api/feed/'
-    },
-    {
-        name: '腾讯新闻',
-        url: 'https://news.qq.com/',
-        api: 'https://news.qq.com/api/feed/'
-    },
-    {
-        name: '网易新闻',
-        url: 'https://news.163.com/',
-        api: 'https://news.163.com/api/feed/'
-    }
-];
-
 // 新闻 API 配置
 const newsApiKey = 'pub_32499e2b0d2b6b7c4e2c8b8c5e8c7d6b5d4c3b2a';
 const newsApiUrl = 'https://newsdata.io/api/1/news';
